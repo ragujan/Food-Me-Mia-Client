@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="minusButton">decrease qty</string>
+    <string name="plusButton">increase qty</string>
+    <string name="detailFoodImage">Food Image</string>
+    <string name="AddToCartImage">Add To Cart Image</string>
+</resources>

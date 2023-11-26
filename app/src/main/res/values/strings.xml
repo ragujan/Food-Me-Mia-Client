@@ -1,0 +1,20 @@
+<resources>
+    <string name="app_name">FoodMeMiaClient</string>
+    <string name="introImgDescription">Intro Bg Image</string>
+    <string name="introImage">Intro image</string>
+    <string name="introButtonText">Get Started</string>
+    <string name="scrollViewLayout">scrollViewLayout</string>
+    <string name="menuBanner">menu banner image</string>
+    <string name="menuAvatar">menu avatar pfp</string>
+    <string name="cartName">My Cart</string>
+    <string name="itemsTotalHeader">Items Total</string>
+    <string name="deliveryServicesHeader">Delivery Services</string>
+    <string name="taxHeader">Tax</string>
+    <string name="cartFinalTotalHeader">Total</string>
+    <string name="zeroDollar">0$</string>
+    <string name="checkoutBtnText">CheckOut</string>
+    <string name="cartItemTitle">Title</string>
+    <string name="detailTotalPriceHeader">Price</string>
+    <string name="addToCartBtnText">Add To Cart</string>
+
+</resources>
