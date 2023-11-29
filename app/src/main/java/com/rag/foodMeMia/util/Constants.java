@@ -7,5 +7,6 @@ public class Constants {
      public static final String DATA_RETRIEVAL_STATUS = "retrievalStatus";
      public static final String UPDATE_STATUS = "Update Status";
      public static final String DELETE_STATUS = "Delete Status";
+     public static final String CART_ITEM_LIST_NAME = "CartItemList";
 
 }

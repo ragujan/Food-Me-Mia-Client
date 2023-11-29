@@ -204,7 +204,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/recyclerView11" />
 
             <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recyclerView2"
+                android:id="@+id/popularFoodListeItemRecyclerView"
                 android:layout_width="411dp"
                 android:layout_height="198dp"
                 android:layout_marginTop="8dp"
@@ -243,7 +243,7 @@
                 android:textSize="20sp"
                 android:textStyle="bold"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/recyclerView2" />
+                app:layout_constraintTop_toBottomOf="@+id/popularFoodListeItemRecyclerView" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/allFoodRecylerView"

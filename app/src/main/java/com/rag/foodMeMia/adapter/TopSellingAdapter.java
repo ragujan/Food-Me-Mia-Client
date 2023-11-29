@@ -1,5 +1,6 @@
 package com.rag.foodMeMia.adapter;
 
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,6 +10,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.rag.foodMeMia.R;
+import com.rag.foodMeMia.activity.ShowDetailActivity;
+import com.rag.foodMeMia.domain.FoodDomainRetrieval;
 import com.rag.foodMeMia.domain.TopSellingFoodDomain;
 import com.rag.foodMeMia.viewHolders.TopSellingViewHolder;
 
@@ -16,11 +19,11 @@ import java.util.List;
 
 public class TopSellingAdapter extends RecyclerView.Adapter<TopSellingViewHolder> {
 
-    public TopSellingAdapter(List<TopSellingFoodDomain> domains) {
+    public TopSellingAdapter(List<FoodDomainRetrieval> domains) {
         this.domains = domains;
     }
 
-    List<TopSellingFoodDomain> domains;
+    List<FoodDomainRetrieval> domains;
     @NonNull
     @Override
     public TopSellingViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -33,15 +36,20 @@ public class TopSellingAdapter extends RecyclerView.Adapter<TopSellingViewHolder
     public void onBindViewHolder(@NonNull TopSellingViewHolder holder, int position) {
         holder.getTitle().setText(domains.get(position).getTitle());
         holder.getPrice().setText(String.valueOf(domains.get(position).getPrice()));
+        Glide.with(holder.itemView.getContext()).load(domains.get(position).getImageUrl()).into(holder.getPic());
 
-        int drawableResouceId = holder.itemView.getContext()
-                .getResources()
-                .getIdentifier(
-                        domains.get(position).getPic()
-                        ,"drawable"
-                        ,holder.itemView.getContext().getPackageName()
-                );
-        Glide.with(holder.itemView.getContext()).load(drawableResouceId).into(holder.getPic());
+        holder.itemView.findViewById(R.id.topSellingFoodConstraintLayout).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(holder.itemView.getContext(), ShowDetailActivity.class);
+                intent.putExtra("object", domains.get(holder.getAdapterPosition()));
+                holder.itemView.getContext().startActivity(intent);
+            }
+        });
+    }
+    public void updateData(List<FoodDomainRetrieval> newData) {
+        domains = newData;
+        notifyDataSetChanged();
     }
 
     @Override

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.widget.Toast;
 
 import com.rag.foodMeMia.domain.FoodDomain;
+import com.rag.foodMeMia.domain.FoodDomainRetrieval;
 import com.rag.foodMeMia.interfaces.ChangeNumberItemsListener;
 
 import java.util.ArrayList;
@@ -20,8 +21,8 @@ public class ManagementCart {
 
     }
 
-    public void insertFood(FoodDomain item) {
-        List<FoodDomain> listFood = getListCart();
+    public void insertFood(FoodDomainRetrieval item) {
+        List<FoodDomainRetrieval> listFood = getListCart();
         boolean existAlready = false;
         int n = 0;
 
@@ -40,17 +41,17 @@ public class ManagementCart {
             listFood.add(item);
         }
 
-        tinyDB.putListObject("CardList", (ArrayList<FoodDomain>) listFood);
+        tinyDB.putListObject("CardList", (ArrayList<FoodDomainRetrieval>) listFood);
         Toast.makeText(context, "Added to your cart", Toast.LENGTH_SHORT).show();
 
     }
 
-    public ArrayList<FoodDomain> getListCart() {
+    public ArrayList<FoodDomainRetrieval> getListCart() {
         return tinyDB.getListObject("CardList");
     }
 
     public void plusNumberFood(
-            ArrayList<FoodDomain> listFood
+            ArrayList<FoodDomainRetrieval> listFood
             , int position
             , ChangeNumberItemsListener changeNumberItemsListener) {
         listFood.get(position).setNumberInCart(listFood.get(position).getNumberInCart() + 1);
@@ -59,7 +60,7 @@ public class ManagementCart {
 
     }
 
-    public void minusNumberFood(ArrayList<FoodDomain> listFood, int position, ChangeNumberItemsListener changeNumberItemsListener) {
+    public void minusNumberFood(ArrayList<FoodDomainRetrieval> listFood, int position, ChangeNumberItemsListener changeNumberItemsListener) {
         if (listFood.get(position).getNumberInCart() == 1) {
             listFood.remove(position);
         } else {
@@ -70,7 +71,7 @@ public class ManagementCart {
     }
 
     public Double getTotalFee() {
-        ArrayList<FoodDomain> listFood2 = getListCart();
+        ArrayList<FoodDomainRetrieval> listFood2 = getListCart();
         double fee = 0;
 
         for (int i = 0; i < listFood2.size(); i++) {

@@ -1,33 +1,19 @@
 package com.rag.foodMeMia.domain;
 
-public class FoodDomainRetrieval extends FoodDomain{
+import android.annotation.SuppressLint;
+
+import java.io.Serializable;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Comparator;
+import java.util.Date;
+
+public class FoodDomainRetrieval extends FoodDomain implements Serializable {
 
     private String uniqueId;
-    private String title;
-    private String price;
-    private String description;
-    private Integer preparationTime;
-    private Integer calories;
-    private String fastFoodCategory;
-
-    private Boolean isAvailable;
-
-    private String imageUrl;
 
     public FoodDomainRetrieval() {
 
-    }
-
-    public FoodDomainRetrieval(String uniqueId, String title, String price, String description, Integer preparationTime, Integer calories, String fastFoodCategory, Boolean isAvailable, String imageUrl) {
-        this.uniqueId = uniqueId;
-        this.title = title;
-        this.price = price;
-        this.description = description;
-        this.preparationTime = preparationTime;
-        this.calories = calories;
-        this.fastFoodCategory = fastFoodCategory;
-        this.isAvailable = isAvailable;
-        this.imageUrl = imageUrl;
     }
 
     public String getUniqueId() {
@@ -38,5 +24,27 @@ public class FoodDomainRetrieval extends FoodDomain{
         this.uniqueId = uniqueId;
     }
 
+    public class SortByAddedDate implements Comparator<FoodDomainRetrieval> {
+
+        //this will sort from oldest to newest, to get the newest to oldest, you can just reverse it, you know that already boiii.
+        @Override
+        public int compare(FoodDomainRetrieval foodDomain1, FoodDomainRetrieval foodDomain2) {
+            try {
+
+                @SuppressLint("SimpleDateFormat") SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+                Date fdDate1 = simpleDateFormat.parse(foodDomain1.getAdded_at());
+                Date fdDate2 = simpleDateFormat.parse(foodDomain2.getAdded_at());
+                System.out.println("fd1 "+fdDate1+ " fd2 "+fdDate2);
+
+                System.out.println(fdDate1.compareTo(fdDate2));
+
+                return fdDate1.compareTo(fdDate2);
+//
+            } catch (ParseException e) {
+                throw new RuntimeException(e);
+            }
+
+        }
+    }
 
 }

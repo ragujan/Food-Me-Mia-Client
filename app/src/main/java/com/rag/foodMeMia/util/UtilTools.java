@@ -7,7 +7,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
-public class StringUtils {
+public class UtilTools {
 
     public static String getImageNameFromUrl(String imageUrl) {
         AtomicReference<String> imageName = new AtomicReference<>("");
@@ -27,4 +27,5 @@ public class StringUtils {
 
         return imageName.get();
     }
+
 }

@@ -13,49 +13,53 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.rag.foodMeMia.R;
 import com.rag.foodMeMia.activity.ShowDetailActivity;
-import com.rag.foodMeMia.domain.FoodDomain;
+import com.rag.foodMeMia.domain.FoodDomainRetrieval;
 
 import java.util.List;
 
 public class PopularViewAdapter extends RecyclerView.Adapter<PopularViewAdapter.ViewHolder> {
 
-    List<FoodDomain> recommendedFoodDomain;
+    List<FoodDomainRetrieval> popularFoodList;
 
-    public PopularViewAdapter(List<FoodDomain> recommendedFoodDomain) {
-        this.recommendedFoodDomain = recommendedFoodDomain;
+    public PopularViewAdapter(List<FoodDomainRetrieval> popularFoodList) {
+        this.popularFoodList = popularFoodList;
     }
 
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View inflate = LayoutInflater.from(parent.getContext()).inflate(R.layout.view_holder_recommended, parent, false);
+        View inflate = LayoutInflater.from(parent.getContext()).inflate(R.layout.view_holder_popular, parent, false);
         return new ViewHolder(inflate);
 
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder holder,int position) {
-        holder.title.setText(recommendedFoodDomain.get(position).getTitle());
-        holder.fee.setText(String.valueOf(recommendedFoodDomain.get(position).getPrice()));
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+        holder.title.setText(popularFoodList.get(position).getTitle());
+        holder.fee.setText(String.valueOf(popularFoodList.get(position).getPrice()));
 
-            int drawableResourceId = holder.itemView.
-                    getContext().getResources().
-                    getIdentifier(recommendedFoodDomain.get(position).getImageUrl()
-                            ,"drawable",
-                            holder.itemView.getContext().getPackageName()
-                    );
-            Glide.with(holder.itemView.getContext()).load(drawableResourceId).into(holder.pic);
+//        int drawableResourceId = holder.itemView.
+//                getContext().getResources().
+//                getIdentifier(recommendedFoodDomain.get(position).getImageUrl()
+//                        , "drawable",
+//                        holder.itemView.getContext().getPackageName()
+//                );
+        Glide.with(holder.itemView.getContext()).load(popularFoodList.get(position).getImageUrl()).into(holder.pic);
 
 
-            holder.addBtn.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Intent intent = new Intent(holder.itemView.getContext(), ShowDetailActivity.class);
-                    intent.putExtra("object",recommendedFoodDomain.get(holder.getAdapterPosition()));
-                    holder.itemView.getContext().startActivity(intent);
+        holder.addBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(holder.itemView.getContext(), ShowDetailActivity.class);
+                intent.putExtra("object", popularFoodList.get(holder.getAdapterPosition()));
+                holder.itemView.getContext().startActivity(intent);
 
-                }
-            });
+            }
+        });
+    }
+    public void updateData(List<FoodDomainRetrieval> newData) {
+        popularFoodList = newData;
+        notifyDataSetChanged();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
@@ -106,13 +110,12 @@ public class PopularViewAdapter extends RecyclerView.Adapter<PopularViewAdapter.
             addBtn = itemView.findViewById(R.id.addBtn);
 
 
-
         }
     }
 
     @Override
     public int getItemCount() {
-        return recommendedFoodDomain.size();
+        return popularFoodList.size();
     }
 
 }

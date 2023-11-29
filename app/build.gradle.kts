@@ -37,10 +37,15 @@ android {
     sourceSets {
         getByName("main") {
             res {
-                srcDirs("src\\main\\res", "src\\main\\res\\layouts")
+                srcDirs("src\\main\\res", "src\\main\\res\\layouts\\activity",
+                    "src\\main\\res",
+                    "src\\main\\res\\layouts\\fragment", "src\\main\\res", "src\\main\\res\\layouts\\viewholder"
+                )
             }
         }
     }
+
+
 }
 
 dependencies {

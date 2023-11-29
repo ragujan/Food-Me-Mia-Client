@@ -16,12 +16,10 @@ import com.rag.foodMeMia.adapter.CategoryAdapter;
 import com.rag.foodMeMia.adapter.GridAdapter;
 import com.rag.foodMeMia.adapter.PopularViewAdapter;
 import com.rag.foodMeMia.adapter.TopSellingAdapter;
-import com.rag.foodMeMia.databinding.ActivityMenu2Binding;
+import com.rag.foodMeMia.databinding.ActivityMenuBinding;
 import com.rag.foodMeMia.domain.CategoryDomain;
-import com.rag.foodMeMia.domain.FoodDomain;
 import com.rag.foodMeMia.domain.FoodDomainRetrieval;
 import com.rag.foodMeMia.domain.FoodItem;
-import com.rag.foodMeMia.domain.TopSellingFoodDomain;
 import com.rag.foodMeMia.helper.FoodItemRetrievelViewModel;
 import com.rag.foodMeMia.util.Constants;
 import com.rag.foodMeMia.util.firebaseUtil.FoodListRetrieval;
@@ -35,25 +33,27 @@ import java.util.Map;
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 
 public class MenuActivity extends AppCompatActivity {
-    private RecyclerView.Adapter adapter, adapter2, topSellingAdapter, gridLayoutRecyclerViewAdapter;
-    private RecyclerView recyclerViewCategoryList, recylerViewPopulerList, recylerViewTopSellingList, gridLayoutRecyclerView;
+    private RecyclerView.Adapter adapter, gridLayoutRecyclerViewAdapter;
+    private RecyclerView recyclerViewCategoryList, recylerViewPopulerList,  gridLayoutRecyclerView;
 
-    private RecyclerView allFoodRecyclerView;
+    private RecyclerView allFoodRecyclerView, popularFoodRecyclerView, topSellingFoodRecyclerView;
     private AllFoodListAdapter allFoodRecyclerViewAdapter;
+    private PopularViewAdapter popularViewAdapter;
+    private TopSellingAdapter topSellingAdapter;
 
-    private ActivityMenu2Binding binding;
+    private ActivityMenuBinding binding;
     private FoodItemRetrievelViewModel viewModel;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_menu_2);
-        binding = ActivityMenu2Binding.inflate(getLayoutInflater());
+        setContentView(R.layout.activity_menu);
+        binding = ActivityMenuBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
         recyclerViewCategory();
         recyclerViewPopular();
-        setRecylerViewTopSelling();
+        setRecyclerviewTopSelling();
 //        recyclerViewGridItems();
         viewFoodItems();
         binding.carBtnNavText.setOnClickListener(new View.OnClickListener() {
@@ -75,55 +75,110 @@ public class MenuActivity extends AppCompatActivity {
     }
 
 
-    private void setRecylerViewTopSelling() {
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
-        recylerViewTopSellingList = findViewById(R.id.topSellingRecylerView);
-        recylerViewTopSellingList.setLayoutManager(linearLayoutManager);
+    @SuppressLint("CheckResult")
+    private void setRecyclerviewTopSelling() {
 
 
-        List<TopSellingFoodDomain> topSellingFoodDomains = new LinkedList<>();
-        topSellingFoodDomains.add(new TopSellingFoodDomain("Potato Chips", 100.00, "potato_chips"));
-        topSellingFoodDomains.add(new TopSellingFoodDomain("Poke BBQ", 1400.00, "poke_bbq"));
-        topSellingFoodDomains.add(new TopSellingFoodDomain("Veggie Burger", 500.00, "veggie_burger"));
-        topSellingFoodDomains.add(new TopSellingFoodDomain("Smoothie Juice", 1200.00, "smoothi_juice"));
-        topSellingFoodDomains.add(new TopSellingFoodDomain("Beef Fry", 1500.00, "beef_fry"));
-
-        topSellingFoodDomains.add(new TopSellingFoodDomain("Potato Chips", 100.00, "potato_chips"));
-        topSellingFoodDomains.add(new TopSellingFoodDomain("Poke BBQ", 1400.00, "poke_bbq"));
-        topSellingFoodDomains.add(new TopSellingFoodDomain("Veggie Burger", 500.00, "veggie_burger"));
-        topSellingFoodDomains.add(new TopSellingFoodDomain("Smoothie Juice", 1200.00, "smoothi_juice"));
-        topSellingFoodDomains.add(new TopSellingFoodDomain("Beef Fry", 1500.00, "beef_fry"));
 
 
-        topSellingFoodDomains.add(new TopSellingFoodDomain("Potato Chips", 100.00, "potato_chips"));
-        topSellingFoodDomains.add(new TopSellingFoodDomain("Poke BBQ", 1400.00, "poke_bbq"));
-        topSellingFoodDomains.add(new TopSellingFoodDomain("Veggie Burger", 500.00, "veggie_burger"));
-        topSellingFoodDomains.add(new TopSellingFoodDomain("Smoothie Juice", 1200.00, "smoothi_juice"));
-        topSellingFoodDomains.add(new TopSellingFoodDomain("Beef Fry", 1500.00, "beef_fry"));
 
-        topSellingFoodDomains.add(new TopSellingFoodDomain("Potato Chips", 100.00, "potato_chips"));
-        topSellingFoodDomains.add(new TopSellingFoodDomain("Poke BBQ", 1400.00, "poke_bbq"));
-        topSellingFoodDomains.add(new TopSellingFoodDomain("Veggie Burger", 500.00, "veggie_burger"));
-        topSellingFoodDomains.add(new TopSellingFoodDomain("Smoothie Juice", 1200.00, "smoothi_juice"));
-        topSellingFoodDomains.add(new TopSellingFoodDomain("Beef Fry", 1500.00, "beef_fry"));
-        topSellingAdapter = new TopSellingAdapter(topSellingFoodDomains);
-        recylerViewTopSellingList.setAdapter(topSellingAdapter);
+        topSellingAdapter = new TopSellingAdapter(new LinkedList<>());
+
+        FoodListRetrieval.getTopSelling(topSellingAdapter, 6).observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(
+                                resultsSet -> {
+
+                                    if (resultsSet.get(Constants.DATA_RETRIEVAL_STATUS).equals("Success")) {
+                                        List<FoodDomainRetrieval> foodDomainList = (List<FoodDomainRetrieval>) resultsSet.get("foodDomainList");
+                                        TopSellingAdapter adapter = (TopSellingAdapter) resultsSet.get("adapter");
+                                        Map<String, Object> map = new HashMap<>();
+                                        map.put("foodDomainList", foodDomainList);
+                                        map.put("adapter", adapter);
+
+                                        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
+                                        topSellingFoodRecyclerView = findViewById(R.id.topSellingRecylerView);
+                                        topSellingFoodRecyclerView.setLayoutManager(linearLayoutManager);
+                                        topSellingAdapter = adapter;
+                                        topSellingFoodRecyclerView.setAdapter(topSellingAdapter);
+
+                                    }
+                                },
+                                throwable -> {
+                                    throwable.printStackTrace();
+                                }
+                        );
+
     }
 
+    @SuppressLint("CheckResult")
     private void recyclerViewPopular() {
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
-        recylerViewPopulerList = findViewById(R.id.recyclerView2);
+        recylerViewPopulerList = findViewById(R.id.popularFoodListeItemRecyclerView);
         recylerViewPopulerList.setLayoutManager(linearLayoutManager);
 
-        List<FoodDomain> foodList = new ArrayList<>();
-        foodList.add(new FoodDomain("Pepperoni Pizza", "pizza1", "slices pepperoni", 13.0, 5, 5, 1000));
-        foodList.add(new FoodDomain("Cheese Burger", "burger", "special sauce, lettuce, tomato ", 15.20, 5, 5, 1000));
-        foodList.add(new FoodDomain("Vegetable Burger", "pizza3", "Olive oil, vegetable oil, pittled kalamata", 25.0, 5, 5, 1000));
-        foodList.add(new FoodDomain("Doner Kebab Gyro", "kebab", "Olive oil, vegetable oil, pittled kalamata", 25.0, 5, 5, 1000));
-        foodList.add(new FoodDomain("Pasta", "pasta", "Olive oil, vegetable oil, pittled kalamata", 25.0, 5, 5, 1000));
+        List<FoodDomainRetrieval> foodList = new ArrayList<>();
 
-        adapter2 = new PopularViewAdapter(foodList);
-        recylerViewPopulerList.setAdapter(adapter2);
+        popularViewAdapter = new PopularViewAdapter(new ArrayList<>());
+        recylerViewPopulerList.setAdapter(popularViewAdapter);
+
+         popularViewAdapter = new PopularViewAdapter(new LinkedList<>());
+        FoodListRetrieval.getPopular(popularViewAdapter,5).observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        resultsSet -> {
+
+                            if (resultsSet.get(Constants.DATA_RETRIEVAL_STATUS).equals("Success")) {
+                                List<FoodDomainRetrieval> foodDomainList = (List<FoodDomainRetrieval>) resultsSet.get("foodDomainList");
+                                PopularViewAdapter adapter = (PopularViewAdapter) resultsSet.get("adapter");
+                                Map<String, Object> map = new HashMap<>();
+                                map.put("foodDomainList", foodDomainList);
+                                map.put("adapter", adapter);
+
+                                popularFoodRecyclerView = findViewById(R.id.popularFoodListeItemRecyclerView);
+                                popularFoodRecyclerView.setLayoutManager(linearLayoutManager);
+                                popularViewAdapter = adapter;
+                                popularFoodRecyclerView.setAdapter(popularViewAdapter);
+
+                            }
+                        },
+                        throwable -> {
+                            throwable.printStackTrace();
+                        }
+
+                );
+
+
+    }
+
+    @SuppressLint("CheckResult")
+    public void viewFoodItems() {
+        AllFoodListAdapter recyclerViewAdapter = new AllFoodListAdapter(new LinkedList<>());
+        FoodListRetrieval.getAllFoods(recyclerViewAdapter).observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        resultsSet -> {
+
+                            if (resultsSet.get(Constants.DATA_RETRIEVAL_STATUS).equals("Success")) {
+                                List<FoodDomainRetrieval> foodDomainList = (List<FoodDomainRetrieval>) resultsSet.get("foodDomainList");
+                                AllFoodListAdapter adapter = (AllFoodListAdapter) resultsSet.get("adapter");
+                                Map<String, Object> map = new HashMap<>();
+                                map.put("foodDomainList", foodDomainList);
+                                map.put("adapter", adapter);
+                                foodDomainList.forEach(e -> System.out.println("food title is " + e.getTitle()));
+//                                viewModel.setFoodItemsRetrieved(map);
+
+                                GridLayoutManager gridLayoutManager = new GridLayoutManager(MenuActivity.this, 2, RecyclerView.VERTICAL, false);
+                                allFoodRecyclerView = findViewById(R.id.allFoodRecylerView);
+                                allFoodRecyclerView.setLayoutManager(gridLayoutManager);
+                                allFoodRecyclerViewAdapter = adapter;
+                                allFoodRecyclerView.setAdapter(allFoodRecyclerViewAdapter);
+
+
+                            }
+                        },
+                        throwable -> {
+
+                            throwable.printStackTrace();
+                        }
+                );
 
     }
 
@@ -186,36 +241,5 @@ public class MenuActivity extends AppCompatActivity {
 
     }
 
-    @SuppressLint("CheckResult")
-    public void viewFoodItems() {
-        AllFoodListAdapter recyclerViewAdapter = new AllFoodListAdapter(new LinkedList<>());
-        FoodListRetrieval.getAllFoods(recyclerViewAdapter).observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                        resultsSet -> {
 
-                            if (resultsSet.get(Constants.DATA_RETRIEVAL_STATUS).equals("Success")) {
-                                List<FoodDomainRetrieval> foodDomainList = (List<FoodDomainRetrieval>) resultsSet.get("foodDomainList");
-                                AllFoodListAdapter adapter = (AllFoodListAdapter) resultsSet.get("adapter");
-                                Map<String, Object> map = new HashMap<>();
-                                map.put("foodDomainList", foodDomainList);
-                                map.put("adapter", adapter);
-                                foodDomainList.forEach(e -> System.out.println("food title is " + e.getTitle()));
-//                                viewModel.setFoodItemsRetrieved(map);
-
-                                GridLayoutManager gridLayoutManager = new GridLayoutManager(MenuActivity.this, 2, RecyclerView.VERTICAL, false);
-                                allFoodRecyclerView = findViewById(R.id.allFoodRecylerView);
-                                allFoodRecyclerView.setLayoutManager(gridLayoutManager);
-                                allFoodRecyclerViewAdapter = adapter;
-                                allFoodRecyclerView.setAdapter(allFoodRecyclerViewAdapter);
-
-
-                            }
-                        },
-                        throwable -> {
-
-                            throwable.printStackTrace();
-                        }
-                );
-
-    }
 }

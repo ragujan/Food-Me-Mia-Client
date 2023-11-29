@@ -13,17 +13,18 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.rag.foodMeMia.R;
 import com.rag.foodMeMia.domain.FoodDomain;
+import com.rag.foodMeMia.domain.FoodDomainRetrieval;
 import com.rag.foodMeMia.helper.ManagementCart;
 import com.rag.foodMeMia.interfaces.ChangeNumberItemsListener;
 
 import java.util.ArrayList;
 
 public class CartListAdapter extends RecyclerView.Adapter<CartListAdapter.ViewHolder> {
-    ArrayList<FoodDomain> listFoodSelected;
+    ArrayList<FoodDomainRetrieval> listFoodSelected;
     private ManagementCart managementCart;
     ChangeNumberItemsListener changeNumberItemsListener;
 
-    public CartListAdapter(ArrayList<FoodDomain> listFoodSelected, Context context, ChangeNumberItemsListener changeNumberItemsListener) {
+    public CartListAdapter(ArrayList<FoodDomainRetrieval> listFoodSelected, Context context, ChangeNumberItemsListener changeNumberItemsListener) {
         this.listFoodSelected = listFoodSelected;
         this.managementCart = new ManagementCart(context);
         this.changeNumberItemsListener = changeNumberItemsListener;

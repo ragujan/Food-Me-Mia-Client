@@ -1,6 +1,5 @@
 package com.rag.foodMeMia.adapter;
 
-import android.content.Context;
 import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,12 +8,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.rag.foodMeMia.R;
+import com.rag.foodMeMia.activity.ShowDetailActivity;
 import com.rag.foodMeMia.domain.FoodDomainRetrieval;
 
 import java.util.List;
@@ -39,7 +37,7 @@ public class AllFoodListAdapter extends RecyclerView.Adapter<AllFoodListAdapter.
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View inflate = LayoutInflater.from(parent.getContext()).inflate(R.layout.grid_item, parent, false);
+        View inflate = LayoutInflater.from(parent.getContext()).inflate(R.layout.view_holder_all_food_item, parent, false);
         this.parent = parent;
 
         return new ViewHolder(inflate);
@@ -55,6 +53,15 @@ public class AllFoodListAdapter extends RecyclerView.Adapter<AllFoodListAdapter.
 
 
         Glide.with(holder.itemView.getContext()).load(foodDomain.getImageUrl()).into(holder.imageView);
+
+        holder.itemView.findViewById(R.id.all_food_item_relativeLayout).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(holder.itemView.getContext(), ShowDetailActivity.class);
+                intent.putExtra("object", foodDomainList.get(holder.getAdapterPosition()));
+                holder.itemView.getContext().startActivity(intent);
+            }
+        });
 
 
 
