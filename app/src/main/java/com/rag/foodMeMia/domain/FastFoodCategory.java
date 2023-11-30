@@ -1,6 +1,7 @@
 package com.rag.foodMeMia.domain;
 
 public enum FastFoodCategory {
+    //    there are 10 categories so far
     BURGER,
     PIZZA,
     FRIED_CHICKEN,
@@ -11,4 +12,5 @@ public enum FastFoodCategory {
     ICE_CREAM,
     SODA,
     SALAD,
+
 }

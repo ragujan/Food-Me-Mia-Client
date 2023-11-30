@@ -18,6 +18,7 @@ import com.rag.foodMeMia.adapter.PopularViewAdapter;
 import com.rag.foodMeMia.adapter.TopSellingAdapter;
 import com.rag.foodMeMia.databinding.ActivityMenuBinding;
 import com.rag.foodMeMia.domain.CategoryDomain;
+import com.rag.foodMeMia.domain.FastFoodCategory;
 import com.rag.foodMeMia.domain.FoodDomainRetrieval;
 import com.rag.foodMeMia.domain.FoodItem;
 import com.rag.foodMeMia.helper.FoodItemRetrievelViewModel;
@@ -25,6 +26,7 @@ import com.rag.foodMeMia.util.Constants;
 import com.rag.foodMeMia.util.firebaseUtil.FoodListRetrieval;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -43,6 +45,8 @@ public class MenuActivity extends AppCompatActivity {
 
     private ActivityMenuBinding binding;
     private FoodItemRetrievelViewModel viewModel;
+
+    FastFoodCategory categoryToLoad;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -190,14 +194,17 @@ public class MenuActivity extends AppCompatActivity {
         recyclerViewCategoryList.setLayoutManager(linearLayoutManager);
 
         List<CategoryDomain> categoryList = new ArrayList<>();
-        categoryList.add(new CategoryDomain("Pizza", "cat_1"));
-        categoryList.add(new CategoryDomain("Burger", "cat_2"));
-        categoryList.add(new CategoryDomain("Hot Dog", "cat_3"));
-        categoryList.add(new CategoryDomain("Drink", "cat_4"));
-        categoryList.add(new CategoryDomain("Donut", "cat_5"));
+        List<FastFoodCategory> names = Arrays.asList(FastFoodCategory.values());
 
 
-        adapter = new CategoryAdapter(categoryList);
+        for (int i = 0; i <names.size() ; i++) {
+            categoryList.add(new CategoryDomain(names.get(i).toString(), "cat_"+(i+1)));
+        }
+
+
+        adapter = new CategoryAdapter(categoryList, ()->{
+            binding.scrollView3.scrollTo(0, binding.allItemsHeaderTextView.getTop());
+        },categoryToLoad);
 
         recyclerViewCategoryList.setAdapter(adapter);
 
