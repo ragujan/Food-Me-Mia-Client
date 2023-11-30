@@ -38,14 +38,7 @@ public class PopularViewAdapter extends RecyclerView.Adapter<PopularViewAdapter.
         holder.title.setText(popularFoodList.get(position).getTitle());
         holder.fee.setText(String.valueOf(popularFoodList.get(position).getPrice()));
 
-//        int drawableResourceId = holder.itemView.
-//                getContext().getResources().
-//                getIdentifier(recommendedFoodDomain.get(position).getImageUrl()
-//                        , "drawable",
-//                        holder.itemView.getContext().getPackageName()
-//                );
         Glide.with(holder.itemView.getContext()).load(popularFoodList.get(position).getImageUrl()).into(holder.pic);
-
 
         holder.addBtn.setOnClickListener(new View.OnClickListener() {
             @Override

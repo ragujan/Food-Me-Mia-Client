@@ -49,8 +49,6 @@ public class AllFoodListAdapter extends RecyclerView.Adapter<AllFoodListAdapter.
         FoodDomainRetrieval foodDomain = foodDomainList.get(position);
 
         holder.textView.setText(foodDomain.getTitle().toString());
-//        holder..setText(foodDomain.getPrice().toString());
-
 
         Glide.with(holder.itemView.getContext()).load(foodDomain.getImageUrl()).into(holder.imageView);
 

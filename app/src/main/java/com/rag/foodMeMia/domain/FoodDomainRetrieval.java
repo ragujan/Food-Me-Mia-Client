@@ -34,9 +34,6 @@ public class FoodDomainRetrieval extends FoodDomain implements Serializable {
                 @SuppressLint("SimpleDateFormat") SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
                 Date fdDate1 = simpleDateFormat.parse(foodDomain1.getAdded_at());
                 Date fdDate2 = simpleDateFormat.parse(foodDomain2.getAdded_at());
-                System.out.println("fd1 "+fdDate1+ " fd2 "+fdDate2);
-
-                System.out.println(fdDate1.compareTo(fdDate2));
 
                 return fdDate1.compareTo(fdDate2);
 //
