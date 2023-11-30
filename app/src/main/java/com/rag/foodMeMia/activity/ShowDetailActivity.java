@@ -3,6 +3,7 @@ package com.rag.foodMeMia.activity;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
@@ -85,7 +86,7 @@ public class ShowDetailActivity extends AppCompatActivity {
         timeTxt.setText(String.valueOf(object.getPreparationTime()) + " minutes");
         totalPriceText.setText("$ " + String.valueOf(numberOrder * object.getPrice()));
 
-        if(!checkAlreadyAdded()){
+        if (!checkAlreadyAdded()) {
             binding.cartStatusImage.setVisibility(View.INVISIBLE);
         }
 
@@ -125,26 +126,31 @@ public class ShowDetailActivity extends AppCompatActivity {
 //                debug section ends
 //                +++++++++++++++++++
 
-               cartItemListManagement.addCartItem(object,numberOrder);
+                cartItemListManagement.addCartItem(object, numberOrder);
 
                 object.setNumberInCart(numberOrder);
                 managementCart.insertFood(object);
+                if (checkAlreadyAdded()) {
+                    binding.cartStatusImage.setVisibility(View.VISIBLE);
+                    Intent intent = new Intent(ShowDetailActivity.this, MenuActivity.class);
+                    startActivity(intent);
+                }
             }
         });
 
     }
 
-    public boolean checkAlreadyAdded(){
+    public boolean checkAlreadyAdded() {
         boolean isAdded = false;
         TinyDB tinyDB = new TinyDB(ShowDetailActivity.this);
 
         CartItemList cartItemList = tinyDB.getObject(Constants.CART_ITEM_LIST_NAME, CartItemList.class);
 
-        if(cartItemList != null){
+        if (cartItemList != null) {
             List<CartItem> cartItems = cartItemList.getCartItemList();
-            for (CartItem item: cartItems
+            for (CartItem item : cartItems
             ) {
-                if(item.getFoodDomainRetrieval().getUniqueId().equals(object.getUniqueId())){
+                if (item.getFoodDomainRetrieval().getUniqueId().equals(object.getUniqueId())) {
 
                     isAdded = true;
                     break;
@@ -155,6 +161,7 @@ public class ShowDetailActivity extends AppCompatActivity {
         return isAdded;
 
     }
+
     public void initView() {
         addToCartBtn = binding.addToCartBtn;
         titleTxt = binding.detailViewTitle;

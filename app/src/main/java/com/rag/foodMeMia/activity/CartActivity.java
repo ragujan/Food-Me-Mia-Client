@@ -43,19 +43,17 @@ public class CartActivity extends AppCompatActivity {
         super.onCreate(savedInstance);
         binding = binding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-//        managementCart = new ManagementCart(CartActivity.this);
         cartItemListManagement = new CartItemListManagement(CartActivity.this);
 
-        TinyDB t = new TinyDB(CartActivity.this);
 
-//        t.clear();
         initView();
         if (!isCartListEmpty()) {
             System.out.println("cart is not empty");
             calculateCard();
             initList();
         } else {
-
+            emptyTxt.setVisibility(View.VISIBLE);
+            scrollView.setVisibility(View.GONE);
             System.out.println("cart is empty");
         }
 
@@ -90,12 +88,17 @@ public class CartActivity extends AppCompatActivity {
     }
 
     private boolean isCartListEmpty() {
-        boolean state = false;
-        if (cartItemListManagement.getCartItemList() == null) {
+        if (cartItemListManagement.getCartItemList() == null || cartItemListManagement.getCartItemList().getCartItemList().size() == 0) {
             return true;
         }
         return false;
 
+    }
+    private void showEmptyCartMessage(){
+         if(isCartListEmpty()){
+             emptyTxt.setVisibility(View.VISIBLE);
+             scrollView.setVisibility(View.GONE);
+         }
     }
 
     private void initList() {
@@ -109,39 +112,17 @@ public class CartActivity extends AppCompatActivity {
         }
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         recyclerViewList.setLayoutManager(linearLayoutManager);
-//        adapter = new CartListAdapter(managementCart.getListCart(), CartActivity.this, new ChangeNumberItemsListener() {
-//            @Override
-//            public void changed() {
-//                Toast.makeText(CartActivity.this, "Making toast hi hi", Toast.LENGTH_SHORT).show();
-//                calculateCard();
-//            }
-//        });
-//        if (cartItemListManagement.getCartItemList() != null) {
+
         adapter = new CartListAdapterV2(cartItemListManagement.getCartItemList(), CartActivity.this, new ChangeNumberItemsListener() {
             @Override
             public void changed() {
                 calculateCard();
+                showEmptyCartMessage();
 
             }
         });
         recyclerViewList.setAdapter(adapter);
 
-//        }
-//        adapter = new CartListAdapter(managementCart.getListCart(), CartActivity.this, new ChangeNumberItemsListener() {
-//            @Override
-//            public void changed() {
-//                calculateCard();
-//
-//            }
-//        });
-
-//        if (managementCart.getListCart().isEmpty()) {
-//            emptyTxt.setVisibility(View.VISIBLE);
-//            scrollView.setVisibility(View.GONE);
-//        } else {
-//            emptyTxt.setVisibility(View.GONE);
-//            scrollView.setVisibility(View.VISIBLE);
-//        }
 
 
     }
@@ -151,11 +132,6 @@ public class CartActivity extends AppCompatActivity {
         double percentTax = 0.02;
         double deliveryCharge = 10.00;
 
-//        tax = Math.round((managementCart.getTotalFee() * percentTax) * 100.0) / 100.0;
-//
-//        double total = Math.round((managementCart.getTotalFee() + tax + deliveryCharge) * 100.00) / 100.00;
-//
-//        double itemTotal = Math.round(managementCart.getTotalFee() * 100.00) / 100.00;
 
         tax = Math.round((cartItemListManagement.getTotalFee() * percentTax) * 100.0) / 100.0;
 

@@ -68,19 +68,17 @@ public class CartItemListManagement {
             , ChangeNumberItemsListener changeNumberItemsListener
     ) {
         CartItemList cartItemList = getCartItemList();
-        if (cartItemList != null) {
-            FoodDomainRetrieval object = foodItem;
-            List<CartItem> cartItems = cartItemList.getCartItemList();
-            for (CartItem item : cartItems
-            ) {
-                if (item.getFoodDomainRetrieval().getUniqueId().equals(object.getUniqueId())) {
-                    item.setQty(item.getQty() + 1);
-                    break;
-                }
+        FoodDomainRetrieval object = foodItem;
+        List<CartItem> cartItems = cartItemList.getCartItemList();
+        for (CartItem item : cartItems
+        ) {
+            if (item.getFoodDomainRetrieval().getUniqueId().equals(object.getUniqueId())) {
+                item.setQty(item.getQty() + 1);
+                break;
             }
-            tinyDB.putObject(Constants.CART_ITEM_LIST_NAME, cartItemList);
-            changeNumberItemsListener.changed();
         }
+        tinyDB.putObject(Constants.CART_ITEM_LIST_NAME, cartItemList);
+        changeNumberItemsListener.changed();
     }
 
 
@@ -94,6 +92,7 @@ public class CartItemListManagement {
         CartItemList cartItemList = getCartItemList();
 
         if (cartItemList != null) {
+
             FoodDomainRetrieval object = foodItem;
             List<CartItem> cartItems = cartItemList.getCartItemList();
             int pos = 0;
@@ -126,10 +125,15 @@ public class CartItemListManagement {
 
     public Double getTotalFee() {
         double fee = 0;
-        List<CartItem> cartItems = getCartItemList().getCartItemList();
-        for (CartItem item : cartItems
-        ) {
-            fee += item.getFoodDomainRetrieval().getPrice() * item.getQty();
+        if (getCartItemList() != null) {
+            System.out.println("cart is not empty from decrease QTY");
+            List<CartItem> cartItems = getCartItemList().getCartItemList();
+            for (CartItem item : cartItems
+            ) {
+                fee += item.getFoodDomainRetrieval().getPrice() * item.getQty();
+            }
+        }else{
+            System.out.println("cart is empty from decrease QTY");
         }
         return fee;
     }
