@@ -1,8 +1,10 @@
 package com.rag.foodMeMia.domain;
 
+import java.io.Serializable;
 import java.util.List;
+import java.util.Map;
 
-public class CartItemList {
+public class CartItemList implements Serializable {
     private List<CartItem> cartItemList;
     private String user;
 

@@ -1,6 +1,8 @@
 package com.rag.foodMeMia.domain;
 
-public class CartItem {
+import java.io.Serializable;
+
+public class CartItem implements Serializable {
     private FoodDomainRetrieval foodDomainRetrieval;
 
     private Integer qty;

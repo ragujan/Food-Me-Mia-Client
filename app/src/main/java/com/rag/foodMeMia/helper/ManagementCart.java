@@ -3,9 +3,12 @@ package com.rag.foodMeMia.helper;
 import android.content.Context;
 import android.widget.Toast;
 
+import com.rag.foodMeMia.domain.CartItem;
+import com.rag.foodMeMia.domain.CartItemList;
 import com.rag.foodMeMia.domain.FoodDomain;
 import com.rag.foodMeMia.domain.FoodDomainRetrieval;
 import com.rag.foodMeMia.interfaces.ChangeNumberItemsListener;
+import com.rag.foodMeMia.util.Constants;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,18 +45,23 @@ public class ManagementCart {
         }
 
         tinyDB.putListObject("CardList", (ArrayList<FoodDomainRetrieval>) listFood);
-        Toast.makeText(context, "Added to your cart", Toast.LENGTH_SHORT).show();
+//        Toast.makeText(context, "Added to your cart", Toast.LENGTH_SHORT).show();
 
     }
 
     public ArrayList<FoodDomainRetrieval> getListCart() {
         return tinyDB.getListObject("CardList");
     }
+    public CartItemList getCartItemList(){
+        return tinyDB.getObject(Constants.CART_ITEM_LIST_NAME, CartItemList.class);
+    }
 
     public void plusNumberFood(
             ArrayList<FoodDomainRetrieval> listFood
             , int position
-            , ChangeNumberItemsListener changeNumberItemsListener) {
+            , ChangeNumberItemsListener changeNumberItemsListener
+
+    ) {
         listFood.get(position).setNumberInCart(listFood.get(position).getNumberInCart() + 1);
         tinyDB.putListObject("CardList", listFood);
         changeNumberItemsListener.changed();
@@ -71,13 +79,17 @@ public class ManagementCart {
     }
 
     public Double getTotalFee() {
+
+
+
         ArrayList<FoodDomainRetrieval> listFood2 = getListCart();
         double fee = 0;
-
         for (int i = 0; i < listFood2.size(); i++) {
             fee = fee + (listFood2.get(i).getPrice() * listFood2.get(i).getNumberInCart());
 
         }
+
+
         return fee;
     }
 }

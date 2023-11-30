@@ -324,8 +324,10 @@ public class TinyDB {
         String json = getString(key);
         Object value = new Gson().fromJson(json, classOfT);
         if (value == null)
-            throw new NullPointerException();
+            return null;
+//            throw new NullPointerException();
         return (T)value;
+//        return null;
     }
 
 
@@ -475,7 +477,6 @@ public class TinyDB {
         }
         putListString(key, objStrings);
     }
-
     /**
      * Remove SharedPreferences item with 'key'
      * @param key SharedPreferences key
