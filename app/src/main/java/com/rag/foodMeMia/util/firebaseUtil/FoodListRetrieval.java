@@ -72,7 +72,43 @@ public class FoodListRetrieval {
 
         }).observeOn(Schedulers.io()).subscribeOn(AndroidSchedulers.mainThread());
     }
+    public static final Single<Map<String, Object>> getAllFoods(AllFoodListAdapter allFoodListAdapter,String categoryName) {
+        return Single.<Map<String, Object>>create(emitter -> {
 
+            List<FoodDomainRetrieval> foodDomainList = new LinkedList<>();
+            FirebaseFirestore db = FirebaseFirestore.getInstance();
+            Map<String, Object> dataResuts = new HashMap<>();
+
+            db.collection(Constants.FAST_FOOD_ITEMS_COLLECTION_NAME).whereEqualTo("available",true).whereEqualTo("fastFoodCategory",categoryName)
+                    .addSnapshotListener(new EventListener<QuerySnapshot>() {
+                                             @Override
+                                             public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException e) {
+                                                 if (e != null) {
+                                                     Log.w(TAG, "Listen failed.", e);
+                                                     emitter.onError(e);
+                                                     return;
+                                                 }
+                                                 foodDomainList.clear();
+                                                 for (QueryDocumentSnapshot document : value) {
+                                                     FoodDomainRetrieval foodDomainRetrieval = (FoodDomainRetrieval) document.toObject(FoodDomainRetrieval.class);
+                                                     String id = document.getId();
+                                                     foodDomainRetrieval.setUniqueId(id);
+                                                     foodDomainList.add(foodDomainRetrieval);
+                                                 }
+                                                 dataResuts.put(Constants.DATA_RETRIEVAL_STATUS, "Success");
+                                                 dataResuts.put("foodDomainList", foodDomainList);
+                                                 foodDomainList.stream().forEach(data -> System.out.println("newly updated " + data.getTitle()));
+                                                 allFoodListAdapter.updateData(foodDomainList);
+                                                 dataResuts.put("adapter", allFoodListAdapter);
+
+                                                 emitter.onSuccess(dataResuts);
+                                             }
+                                         }
+
+                    );
+
+        }).observeOn(Schedulers.io()).subscribeOn(AndroidSchedulers.mainThread());
+    }
     public static final Single<Map<String, Object>> getAvailableFoodItemsOnly(AllFoodListAdapter allFoodListAdapter, boolean status) {
         return Single.<Map<String, Object>>create(emitter -> {
 

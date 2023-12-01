@@ -4,8 +4,10 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -21,6 +23,7 @@ import com.rag.foodMeMia.domain.CategoryDomain;
 import com.rag.foodMeMia.domain.FastFoodCategory;
 import com.rag.foodMeMia.domain.FoodDomainRetrieval;
 import com.rag.foodMeMia.domain.FoodItem;
+import com.rag.foodMeMia.helper.CategorySelectionViewModel;
 import com.rag.foodMeMia.helper.FoodItemRetrievelViewModel;
 import com.rag.foodMeMia.util.Constants;
 import com.rag.foodMeMia.util.firebaseUtil.FoodListRetrieval;
@@ -36,7 +39,7 @@ import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 
 public class MenuActivity extends AppCompatActivity {
     private RecyclerView.Adapter adapter, gridLayoutRecyclerViewAdapter;
-    private RecyclerView recyclerViewCategoryList, recylerViewPopulerList,  gridLayoutRecyclerView;
+    private RecyclerView recyclerViewCategoryList, recylerViewPopulerList, gridLayoutRecyclerView;
 
     private RecyclerView allFoodRecyclerView, popularFoodRecyclerView, topSellingFoodRecyclerView;
     private AllFoodListAdapter allFoodRecyclerViewAdapter;
@@ -44,7 +47,7 @@ public class MenuActivity extends AppCompatActivity {
     private TopSellingAdapter topSellingAdapter;
 
     private ActivityMenuBinding binding;
-    private FoodItemRetrievelViewModel viewModel;
+
 
     String categoryToLoad;
 
@@ -58,7 +61,6 @@ public class MenuActivity extends AppCompatActivity {
         recyclerViewCategory();
         recyclerViewPopular();
         setRecyclerviewTopSelling();
-//        recyclerViewGridItems();
         viewFoodItems();
         binding.carBtnNavText.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -83,34 +85,31 @@ public class MenuActivity extends AppCompatActivity {
     private void setRecyclerviewTopSelling() {
 
 
-
-
-
         topSellingAdapter = new TopSellingAdapter(new LinkedList<>());
 
         FoodListRetrieval.getTopSelling(topSellingAdapter, 6).observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(
-                                resultsSet -> {
+                .subscribe(
+                        resultsSet -> {
 
-                                    if (resultsSet.get(Constants.DATA_RETRIEVAL_STATUS).equals("Success")) {
-                                        List<FoodDomainRetrieval> foodDomainList = (List<FoodDomainRetrieval>) resultsSet.get("foodDomainList");
-                                        TopSellingAdapter adapter = (TopSellingAdapter) resultsSet.get("adapter");
-                                        Map<String, Object> map = new HashMap<>();
-                                        map.put("foodDomainList", foodDomainList);
-                                        map.put("adapter", adapter);
+                            if (resultsSet.get(Constants.DATA_RETRIEVAL_STATUS).equals("Success")) {
+                                List<FoodDomainRetrieval> foodDomainList = (List<FoodDomainRetrieval>) resultsSet.get("foodDomainList");
+                                TopSellingAdapter adapter = (TopSellingAdapter) resultsSet.get("adapter");
+                                Map<String, Object> map = new HashMap<>();
+                                map.put("foodDomainList", foodDomainList);
+                                map.put("adapter", adapter);
 
-                                        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
-                                        topSellingFoodRecyclerView = findViewById(R.id.topSellingRecylerView);
-                                        topSellingFoodRecyclerView.setLayoutManager(linearLayoutManager);
-                                        topSellingAdapter = adapter;
-                                        topSellingFoodRecyclerView.setAdapter(topSellingAdapter);
+                                LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
+                                topSellingFoodRecyclerView = findViewById(R.id.topSellingRecylerView);
+                                topSellingFoodRecyclerView.setLayoutManager(linearLayoutManager);
+                                topSellingAdapter = adapter;
+                                topSellingFoodRecyclerView.setAdapter(topSellingAdapter);
 
-                                    }
-                                },
-                                throwable -> {
-                                    throwable.printStackTrace();
-                                }
-                        );
+                            }
+                        },
+                        throwable -> {
+                            throwable.printStackTrace();
+                        }
+                );
 
     }
 
@@ -125,8 +124,8 @@ public class MenuActivity extends AppCompatActivity {
         popularViewAdapter = new PopularViewAdapter(new ArrayList<>());
         recylerViewPopulerList.setAdapter(popularViewAdapter);
 
-         popularViewAdapter = new PopularViewAdapter(new LinkedList<>());
-        FoodListRetrieval.getPopular(popularViewAdapter,5).observeOn(AndroidSchedulers.mainThread())
+        popularViewAdapter = new PopularViewAdapter(new LinkedList<>());
+        FoodListRetrieval.getPopular(popularViewAdapter, 5).observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         resultsSet -> {
 
@@ -197,17 +196,52 @@ public class MenuActivity extends AppCompatActivity {
         List<FastFoodCategory> names = Arrays.asList(FastFoodCategory.values());
 
 
-        for (int i = 0; i <names.size() ; i++) {
+        for (int i = 0; i < names.size(); i++) {
             categoryList.add(new CategoryDomain(names.get(i).toString(), names.get(i).toString()));
         }
 
-        categoryList.forEach(e-> System.out.println("list url is "+e.getPic()));
+        categoryList.forEach(e -> System.out.println("list url is " + e.getPic()));
 
-        adapter = new CategoryAdapter(categoryList, ()->{
+        adapter = new CategoryAdapter(categoryList, () -> {
             binding.scrollView3.scrollTo(0, binding.allItemsHeaderTextView.getTop());
-        },categoryToLoad);
-
+        }, (String categoryName) -> {
+            loadCategoryFoodList(categoryName);
+        });
         recyclerViewCategoryList.setAdapter(adapter);
+    }
+
+    @SuppressLint("CheckResult")
+    private void loadCategoryFoodList(String categoryToLoad) {
+//        Toast.makeText(this, "Selected Category is " + categoryToLoad, Toast.LENGTH_SHORT).show();
+
+        AllFoodListAdapter recyclerViewAdapter = new AllFoodListAdapter(new LinkedList<>());
+        FoodListRetrieval.getAllFoods(recyclerViewAdapter,categoryToLoad).observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        resultsSet -> {
+
+                            if (resultsSet.get(Constants.DATA_RETRIEVAL_STATUS).equals("Success")) {
+                                List<FoodDomainRetrieval> foodDomainList = (List<FoodDomainRetrieval>) resultsSet.get("foodDomainList");
+                                AllFoodListAdapter adapter = (AllFoodListAdapter) resultsSet.get("adapter");
+                                Map<String, Object> map = new HashMap<>();
+                                map.put("foodDomainList", foodDomainList);
+                                map.put("adapter", adapter);
+                                foodDomainList.forEach(e -> System.out.println("food title is " + e.getTitle()));
+//                                viewModel.setFoodItemsRetrieved(map);
+
+                                GridLayoutManager gridLayoutManager = new GridLayoutManager(MenuActivity.this, 2, RecyclerView.VERTICAL, false);
+                                allFoodRecyclerView = findViewById(R.id.allFoodRecylerView);
+                                allFoodRecyclerView.setLayoutManager(gridLayoutManager);
+                                allFoodRecyclerViewAdapter = adapter;
+                                allFoodRecyclerView.setAdapter(allFoodRecyclerViewAdapter);
+
+
+                            }
+                        },
+                        throwable -> {
+
+                            throwable.printStackTrace();
+                        }
+                );
 
     }
 
