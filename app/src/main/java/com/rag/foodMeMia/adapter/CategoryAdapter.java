@@ -22,15 +22,18 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.ViewHo
 
     List<CategoryDomain> categoryDomains;
     ScrollToRecyclerView scrollToRecyclerView;
-    FastFoodCategory categoryToLoad;
+    String categoryToLoad;
 
     public CategoryAdapter(List<CategoryDomain> categoryDomains) {
         this.categoryDomains = categoryDomains;
     }
-    public CategoryAdapter(List<CategoryDomain> categoryDomains, ScrollToRecyclerView scrollToRecyclerView, FastFoodCategory categoryToLoad) {
+
+    public CategoryAdapter(List<CategoryDomain> categoryDomains, ScrollToRecyclerView scrollToRecyclerView, String categoryToLoad) {
         this.categoryDomains = categoryDomains;
         this.scrollToRecyclerView = scrollToRecyclerView;
+        this.categoryToLoad = categoryToLoad;
     }
+
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -42,51 +45,18 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.ViewHo
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         holder.categoryName.setText(categoryDomains.get(position).getTitle());
-        String picUrl="";
-        switch (position) {
+        String picUrl = "category_"+ categoryDomains.get(position).getPic().toLowerCase();
 
-            case 0:{
+        int drawableResourceId = holder.itemView.getContext().getResources().getIdentifier(picUrl, "drawable", holder.itemView.getContext().getPackageName());
+        Glide.with(holder.itemView.getContext()).load(drawableResourceId).into(holder.categoryPic);
 
-                picUrl = "cat_1";
-                categoryToLoad = FastFoodCategory.BURGER;
+        holder.mainLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                categoryToLoad = categoryDomains.get(position).getTitle();
+                scrollToRecyclerView.scrolled();
             }
-            case 5: {
-                picUrl = "cat_1";
-                break;
-            }
-            case 1:
-            case 6: {
-                picUrl = "cat_2";
-                break;
-            }
-            case 2:
-            case 7: {
-                picUrl = "cat_3";
-                break;
-            }
-            case 3:
-            case 8: {
-                picUrl = "cat_4";
-                break;
-
-            }
-            case 4:
-            case 9: {
-                picUrl = "cat_5";
-                break;
-            }
-
-        }
-
-            int drawableResourceId = holder.itemView.getContext().getResources().getIdentifier(picUrl,"drawable",holder.itemView.getContext().getPackageName());
-            Glide.with(holder.itemView.getContext()).load(drawableResourceId).into(holder.categoryPic);
-
-            holder.mainLayout.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                   scrollToRecyclerView.scrolled();
-                }
-            });
+        });
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {

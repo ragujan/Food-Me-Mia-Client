@@ -46,7 +46,7 @@ public class MenuActivity extends AppCompatActivity {
     private ActivityMenuBinding binding;
     private FoodItemRetrievelViewModel viewModel;
 
-    FastFoodCategory categoryToLoad;
+    String categoryToLoad;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -198,9 +198,10 @@ public class MenuActivity extends AppCompatActivity {
 
 
         for (int i = 0; i <names.size() ; i++) {
-            categoryList.add(new CategoryDomain(names.get(i).toString(), "cat_"+(i+1)));
+            categoryList.add(new CategoryDomain(names.get(i).toString(), names.get(i).toString()));
         }
 
+        categoryList.forEach(e-> System.out.println("list url is "+e.getPic()));
 
         adapter = new CategoryAdapter(categoryList, ()->{
             binding.scrollView3.scrollTo(0, binding.allItemsHeaderTextView.getTop());
