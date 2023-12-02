@@ -35,10 +35,12 @@ public class Search {
 
 
             db.collection(Constants.FAST_FOOD_ITEMS_COLLECTION_NAME)
+                    .orderBy("title")
                     .where(Filter.or(
-                            Filter.greaterThanOrEqualTo("title", text),
-                            Filter.greaterThanOrEqualTo("description", text)
-                    ))
+                                    Filter.greaterThanOrEqualTo("title", text)
+                            )
+
+                    )
                     .addSnapshotListener(
                             new EventListener<QuerySnapshot>() {
                                 @Override

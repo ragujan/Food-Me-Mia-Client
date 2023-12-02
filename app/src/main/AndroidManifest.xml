@@ -12,36 +12,23 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.FoodMeMiaClient"
         tools:targetApi="31">
+
         <activity
-            android:name="com.rag.foodMeMia.activity.ShowDetailActivity"
-            android:exported="false">
+            android:name=".activity.ShowDetailActivity"
+            android:exported="false" />
+        <activity android:name=".activity.ImageTestActivity" />
 
-        </activity>
-        <!--        <activity-->
-        <!--            android:name="com.rag.foodMeMia.activity.IntroActivity"-->
-        <!--            android:exported="true">-->
-        <!--            <intent-filter>-->
-        <!--                <action android:name="android.intent.action.MAIN" />-->
-
-        <!--                <category android:name="android.intent.category.LAUNCHER" />
-
-        -->
-
-
-        <!--            </intent-filter>-->
-        <!--        </activity>-->
         <activity
-            android:name="com.rag.foodMeMia.activity.MenuActivity"
+            android:name=".activity.MenuActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.CAMERA_BUTTON" />
-
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="com.rag.foodMeMia.activity.CartActivity"></activity>
+        <activity android:name=".activity.CartActivity" />
     </application>
 
 </manifest>

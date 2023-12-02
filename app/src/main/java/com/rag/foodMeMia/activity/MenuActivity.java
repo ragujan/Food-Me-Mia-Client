@@ -2,11 +2,15 @@ package com.rag.foodMeMia.activity;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.media.Image;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -26,7 +30,9 @@ import com.rag.foodMeMia.domain.FoodItem;
 import com.rag.foodMeMia.helper.CategorySelectionViewModel;
 import com.rag.foodMeMia.helper.FoodItemRetrievelViewModel;
 import com.rag.foodMeMia.util.Constants;
+import com.rag.foodMeMia.util.ImageRoundedBorder;
 import com.rag.foodMeMia.util.firebaseUtil.FoodListRetrieval;
+import com.rag.foodMeMia.util.firebaseUtil.Search;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -47,6 +53,7 @@ public class MenuActivity extends AppCompatActivity {
     private TopSellingAdapter topSellingAdapter;
 
     private ActivityMenuBinding binding;
+    private String searchText;
 
 
     String categoryToLoad;
@@ -78,8 +85,111 @@ public class MenuActivity extends AppCompatActivity {
             }
         });
 
+        binding.allItemsHeaderTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (binding.allItemsHeaderTextView.getCurrentTextColor() == ContextCompat.getColor(MenuActivity.this, R.color.mainOrange)) {
+                    binding.allItemsHeaderTextView.setTextColor(ContextCompat.getColor(MenuActivity.this, R.color.black));
+                }
+                viewFoodItems();
+            }
+        });
+
+        binding.seeMoreTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                scrollToAllFoodItems();
+                if (binding.allItemsHeaderTextView.getCurrentTextColor() == ContextCompat.getColor(MenuActivity.this, R.color.mainOrange)) {
+                    binding.allItemsHeaderTextView.setTextColor(ContextCompat.getColor(MenuActivity.this, R.color.black));
+                }
+            }
+        });
+        binding.searchTextField.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                searchText = editable.toString();
+
+            }
+        });
+        binding.searchIconText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                viewFoodItemsBySearch(searchText);
+                scrollToAllFoodItems();
+            }
+        });
+
+        binding.searchTextField.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View view, boolean b) {
+
+                if (b) {
+                }
+            }
+        });
+
+        binding.closeIconTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                binding.searchTextField.getText().clear();
+                viewFoodItems();
+                binding.searchTextField.clearFocus();
+            }
+        });
+        binding.userIcon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(MenuActivity.this, ImageTestActivity.class));
+            }
+        });
+
+        ImageRoundedBorder.set(this,binding.banner,R.drawable.fast_food_items_on_a_table,10);
+    }
+    private void scrollToAllFoodItems(){
+        viewFoodItemsBySearch(searchText);
     }
 
+    @SuppressLint("CheckResult")
+    public void viewFoodItemsBySearch(String searchText) {
+
+        if (searchText.isEmpty()) return;
+        AllFoodListAdapter recyclerViewAdapter = new AllFoodListAdapter(new LinkedList<>());
+        Search.searchByText(recyclerViewAdapter, searchText).observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        resultsSet -> {
+
+                            if (resultsSet.get(Constants.DATA_RETRIEVAL_STATUS).equals("Success")) {
+                                List<FoodDomainRetrieval> foodDomainList = (List<FoodDomainRetrieval>) resultsSet.get("foodDomainList");
+                                AllFoodListAdapter adapter = (AllFoodListAdapter) resultsSet.get("adapter");
+                                Map<String, Object> map = new HashMap<>();
+                                map.put("foodDomainList", foodDomainList);
+                                map.put("adapter", adapter);
+                                foodDomainList.forEach(e -> System.out.println("food title is " + e.getTitle()));
+//                                viewModel.setFoodItemsRetrieved(map);
+
+                                GridLayoutManager gridLayoutManager = new GridLayoutManager(MenuActivity.this, 2, RecyclerView.VERTICAL, false);
+                                allFoodRecyclerView = findViewById(R.id.allFoodRecylerView);
+                                allFoodRecyclerView.setLayoutManager(gridLayoutManager);
+                                allFoodRecyclerViewAdapter = adapter;
+                                allFoodRecyclerView.setAdapter(allFoodRecyclerViewAdapter);
+                                binding.scrollView3.scrollTo(0, binding.allItemsHeaderTextView.getTop());
+                            }
+                        },
+                        throwable -> {
+                            throwable.printStackTrace();
+                        }
+                );
+    }
 
     @SuppressLint("CheckResult")
     private void setRecyclerviewTopSelling() {
@@ -205,6 +315,9 @@ public class MenuActivity extends AppCompatActivity {
         adapter = new CategoryAdapter(categoryList, () -> {
             binding.scrollView3.scrollTo(0, binding.allItemsHeaderTextView.getTop());
         }, (String categoryName) -> {
+            if (binding.allItemsHeaderTextView.getCurrentTextColor() == ContextCompat.getColor(MenuActivity.this, R.color.black)) {
+                binding.allItemsHeaderTextView.setTextColor(ContextCompat.getColor(MenuActivity.this, R.color.mainOrange));
+            }
             loadCategoryFoodList(categoryName);
         });
         recyclerViewCategoryList.setAdapter(adapter);
@@ -215,7 +328,7 @@ public class MenuActivity extends AppCompatActivity {
 //        Toast.makeText(this, "Selected Category is " + categoryToLoad, Toast.LENGTH_SHORT).show();
 
         AllFoodListAdapter recyclerViewAdapter = new AllFoodListAdapter(new LinkedList<>());
-        FoodListRetrieval.getAllFoods(recyclerViewAdapter,categoryToLoad).observeOn(AndroidSchedulers.mainThread())
+        FoodListRetrieval.getAllFoods(recyclerViewAdapter, categoryToLoad).observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         resultsSet -> {
 

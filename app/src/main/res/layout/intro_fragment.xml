@@ -8,7 +8,7 @@
     >
 
     <ImageView
-        android:id="@+id/imageView"
+        android:id="@+id/banner"
         android:layout_width="409dp"
         android:layout_height="894dp"
         android:contentDescription="@string/introImgDescription"
@@ -47,7 +47,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/textView6"
-        app:layout_constraintTop_toTopOf="@+id/imageView" />
+        app:layout_constraintTop_toTopOf="@+id/banner" />
 
     <TextView
         android:id="@+id/textView8"
@@ -71,7 +71,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/imageView"
+        app:layout_constraintTop_toTopOf="@+id/banner"
         app:srcCompat="@drawable/logo" />
 
     <Button
