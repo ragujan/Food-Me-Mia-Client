@@ -55,11 +55,11 @@ public class RegisterFragment extends Fragment {
         EditText e = (EditText) view.findViewById(R.id.registerEmail);
         String eText = e.getText().toString();
 
-        binding.registerButton.setOnClickListener(new View.OnClickListener() {
+        binding.registerBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 String email = binding.registerEmail.getText().toString();
-                String password = binding.registerPassword.getText().toString();
+                String password = binding.registerPw.getText().toString();
                 registerUser(email, password);
             }
         });

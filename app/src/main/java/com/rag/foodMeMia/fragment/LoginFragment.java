@@ -56,7 +56,6 @@ public class LoginFragment extends Fragment {
             public void onClick(View view) {
                 String email = String.valueOf(binding.loginEmail.getText());
                 String password = String.valueOf(binding.loginPw.getText());
-                System.out.println("email is " + email);
                 mAuth.signInWithEmailAndPassword(email, password)
                         .addOnCompleteListener(getActivity(), new OnCompleteListener<AuthResult>() {
                             @Override

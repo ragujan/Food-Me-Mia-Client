@@ -319,7 +319,13 @@ public class MenuActivity extends AppCompatActivity {
                 binding.allItemsHeaderTextView.setTextColor(ContextCompat.getColor(MenuActivity.this, R.color.mainOrange));
             }
             loadCategoryFoodList(categoryName);
-        });
+        }
+
+        );
+
+
+
+
         recyclerViewCategoryList.setAdapter(adapter);
     }
 

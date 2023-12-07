@@ -34,7 +34,9 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.ViewHo
         this.categoryDomains = categoryDomains;
     }
 
-    public CategoryAdapter(List<CategoryDomain> categoryDomains, ScrollToRecyclerView scrollToRecyclerView, SetSelectedCategory setSelectedCategory) {
+    public CategoryAdapter(List<CategoryDomain> categoryDomains
+            , ScrollToRecyclerView scrollToRecyclerView
+            , SetSelectedCategory setSelectedCategory) {
         this.categoryDomains = categoryDomains;
         this.scrollToRecyclerView = scrollToRecyclerView;
         this.setSelectedCategory = setSelectedCategory;

@@ -17,15 +17,35 @@ import com.rag.foodMeMia.domain.FoodDomainRetrieval;
 import com.rag.foodMeMia.util.Constants;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.core.Single;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 
 public class Search {
+    private static Set<FoodDomainRetrieval> addUniqueFoodRetrieval(Set<FoodDomainRetrieval> set, FoodDomainRetrieval foodDomainRetrieval) {
+        boolean isFound = false;
+        Iterator<FoodDomainRetrieval> iterator = set.iterator();
+
+        while (iterator.hasNext()) {
+              FoodDomainRetrieval food = iterator.next();
+              if(food.getUniqueId().equals(foodDomainRetrieval.getUniqueId())){
+                  isFound = true;
+                  break;
+              }
+        }
+
+        if(!isFound){
+            set.add(foodDomainRetrieval);
+        }
+
+        return set;
+    }
 
     public static Single<Map<String, Object>> searchByText(AllFoodListAdapter allFoodListAdapter, String text) {
         return Single.<Map<String, Object>>create(emitter -> {

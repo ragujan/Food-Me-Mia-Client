@@ -6,6 +6,7 @@
     <color name="mainOrange">#ff3d00</color>
     <color name="backgroundColor">#DCDCDC</color>
     <color name="mainYellow">#f6a83a</color>
+    <color name="mainYellow2">#fea900</color>
     <color name="negativeRed"> #C70039 </color>
     <color name="positiveGreen">#0BDA51</color>
     <color name="lightGrey">#c8c5c5</color>

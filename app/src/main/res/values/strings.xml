@@ -26,5 +26,6 @@
     <string name="invalid_password">Password must be >5 characters</string>
     <string name="login_failed">"Login failed"</string>
     <string name="foodItemDescriptionContentDescription">food description</string>
-
+    <integer name="card_flip_time_full">700</integer>
+    <integer name="card_flip_time_half">300</integer>
 </resources>
