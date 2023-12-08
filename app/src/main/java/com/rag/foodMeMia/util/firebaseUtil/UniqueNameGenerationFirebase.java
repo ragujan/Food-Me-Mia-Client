@@ -13,6 +13,41 @@ import io.reactivex.rxjava3.core.Single;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 
 public class UniqueNameGenerationFirebase {
+    public static Single<String> getUniqueImageName(String folderPath) {
+        return Single.<String>create(emitter -> {
+                    FirebaseStorage storage = FirebaseStorage.getInstance();
+                    StorageReference listRef = storage.getReference().child(folderPath);
+
+                    String generatedName = generateString();
+                    listRef.listAll()
+                            .addOnSuccessListener(listResult -> {
+                                List<String> names = new LinkedList<>();
+
+                                for (StorageReference item : listResult.getItems()) {
+
+                                    names.add(item.getName());
+                                }
+
+                                boolean isNameUnique = true;
+
+                                String newName = generateString();
+                                if (names.contains(newName)) {
+                                    isNameUnique = false;
+                                }
+                                while (!isNameUnique) {
+                                    if (names.contains(newName)) {
+                                        newName = generateString();
+                                    } else {
+                                        isNameUnique = true;
+                                    }
+                                }
+                                emitter.onSuccess(newName);
+                            })
+                            .addOnFailureListener(emitter::onError);
+                })
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
+    }
 
     public static Single<String> getUniqueImageName() {
         return Single.<String>create(emitter -> {

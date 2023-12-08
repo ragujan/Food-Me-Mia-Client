@@ -2,11 +2,14 @@ package com.rag.foodMeMia.activity;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.media.Image;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -16,6 +19,11 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.bitmap.CircleCrop;
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.rag.foodMeMia.R;
 import com.rag.foodMeMia.adapter.AllFoodListAdapter;
 import com.rag.foodMeMia.adapter.CategoryAdapter;
@@ -33,6 +41,7 @@ import com.rag.foodMeMia.util.Constants;
 import com.rag.foodMeMia.util.ImageRoundedBorder;
 import com.rag.foodMeMia.util.firebaseUtil.FoodListRetrieval;
 import com.rag.foodMeMia.util.firebaseUtil.Search;
+import com.rag.foodMeMia.util.firebaseUtil.UpdateUserPfp;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -55,7 +64,7 @@ public class MenuActivity extends AppCompatActivity {
     private ActivityMenuBinding binding;
     private String searchText;
 
-
+    private FirebaseAuth mAuth;
     String categoryToLoad;
 
     @Override
@@ -69,6 +78,7 @@ public class MenuActivity extends AppCompatActivity {
         recyclerViewPopular();
         setRecyclerviewTopSelling();
         viewFoodItems();
+        setPfpImage();
         binding.carBtnNavText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -155,6 +165,52 @@ public class MenuActivity extends AppCompatActivity {
 
         ImageRoundedBorder.set(this,binding.banner,R.drawable.fast_food_items_on_a_table,10);
     }
+
+    @SuppressLint("CheckResult")
+    public void setPfpImage(){
+        mAuth = FirebaseAuth.getInstance();
+
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+
+        if (currentUser != null) {
+            String email = currentUser.getEmail();
+
+            UpdateUserPfp.checkUserHasPfp(email).observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(
+
+                            data->{
+
+                                Map<String,Object> userPfpData =(Map<String, Object>) data;
+
+                                String imageFoundState = userPfpData.get(Constants.FOUND_STATUS).toString();
+
+
+                                if(imageFoundState.equals("true")){
+                                    String imageUrl = userPfpData.get("oldPfpUrl").toString();
+
+                                    Glide.with(this).load(Uri.parse(imageUrl))
+                                            .transform(new CircleCrop())
+                                            .into(binding.userIcon);
+
+
+                                }
+                            },
+                            throwable -> {
+
+                            }
+
+                    );
+
+        }
+    }
+
+
+    @Override
+    public void onResume(){
+        super.onResume();
+        setPfpImage();
+    }
+
     private void scrollToAllFoodItems(){
         viewFoodItemsBySearch(searchText);
     }

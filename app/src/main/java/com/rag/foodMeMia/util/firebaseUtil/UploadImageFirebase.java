@@ -1,6 +1,7 @@
 package com.rag.foodMeMia.util.firebaseUtil;
 
 import static com.rag.foodMeMia.util.Constants.FOOD_IMAGE_FOLDER_PATH;
+import static com.rag.foodMeMia.util.Constants.PFP_IMAGE_FOLDER_PATH;
 
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
@@ -14,6 +15,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.rag.foodMeMia.util.Constants;
 
 import java.io.ByteArrayOutputStream;
 import java.util.HashMap;
@@ -70,5 +72,49 @@ public class UploadImageFirebase {
                 .observeOn(AndroidSchedulers.mainThread());
 
     }
+    public static Single<Map<String,Object>> observePfpImageUploading(ImageView imageView, String uniqueImageName) {
+        return Single.<Map<String,Object>>create(
+                        emitter -> {
+                            Map<String,Object> uploadedData = new HashMap<>();
+                            imageView.setDrawingCacheEnabled(true);
+                            imageView.buildDrawingCache();
+                            Bitmap bitmap = ((BitmapDrawable) imageView.getDrawable()).getBitmap();
+                            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+                            byte[] data = baos.toByteArray();
 
+                            FirebaseStorage storage = FirebaseStorage.getInstance();
+                            StorageReference storageRef = storage.getReference();
+                            StorageReference myImageRef = storageRef.child(PFP_IMAGE_FOLDER_PATH + "/" + uniqueImageName);
+
+
+                            UploadTask uploadTask = myImageRef.putBytes(data);
+                            uploadTask.addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception exception) {
+                                    emitter.onError(exception);
+                                }
+                            }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                                @Override
+                                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+
+                                    myImageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                        @Override
+                                        public void onSuccess(Uri uri) {
+
+                                            System.out.println("download url is "+uri);
+                                            uploadedData.put("url",uri);
+                                            uploadedData.put(Constants.UPLOADED_STATUS_KEY,"success");
+                                            emitter.onSuccess(uploadedData);
+                                        }
+                                    });
+
+                                }
+                            });
+                        }
+                )
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
+
+    }
 }

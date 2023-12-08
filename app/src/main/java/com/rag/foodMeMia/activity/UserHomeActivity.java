@@ -64,14 +64,11 @@ public class UserHomeActivity extends AppCompatActivity {
                 }
             }
         });
-        binding.button2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startActivity(new Intent(UserHomeActivity.this, ActivityCheckout.class));
-            }
-        });
 
+
+        ListenerUtil.onClickBtnIntent(binding.button2,UserHomeActivity.this, ActivityCheckout.class);
         ListenerUtil.onClickBtnIntent(binding.homePageBtn,UserHomeActivity.this, MenuActivity.class);
+        ListenerUtil.onClickBtnIntent(binding.navUploadPfp,UserHomeActivity.this, UploadPfpActivity.class);
 
 
     }

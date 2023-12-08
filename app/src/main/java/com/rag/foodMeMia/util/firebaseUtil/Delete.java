@@ -16,7 +16,7 @@ import io.reactivex.rxjava3.core.Single;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 
 public class Delete {
-    public static Single<Map<String, Object>> deleteFile(String imageName) {
+    public static Single<Map<String, Object>> deletePfpImage(String imageName) {
         return Single.<Map<String, Object>>create(emitter -> {
             FirebaseStorage storage = FirebaseStorage.getInstance();
             StorageReference storageRef = storage.getReference();
@@ -25,7 +25,7 @@ public class Delete {
 
             if(imageName != null){
                 System.out.println("previous image name "+imageName);
-                StorageReference desertRef = storageRef.child(Constants.FOOD_IMAGE_FOLDER_PATH +"/"+imageName);
+                StorageReference desertRef = storageRef.child(Constants.PFP_IMAGE_FOLDER_PATH +"/"+imageName);
 
                 System.out.println("download url from rag "+desertRef.toString());
 
@@ -34,7 +34,8 @@ public class Delete {
                     public void onSuccess(Void aVoid) {
                         // File deleted successfully
 
-                        resultData.put(Constants.DELETE_STATUS,"Success");
+                        System.out.println("file is deleted successfully ");
+                        resultData.put(Constants.DELETE_STATUS,"success");
                         emitter.onSuccess(resultData);
                     }
                 }).addOnFailureListener(new OnFailureListener() {
